@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Cobrinha</title>
+
+    <style>
+        body {
+            background-color: #202020;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #65d66e;
+        }
+
+        /* Área onde o jogo será desenhado */
+        canvas {
+            background-color: #111;
+            border: 3px solid #65d66e;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #pontuacao {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Jogo da Cobrinha</h1>
+
+    <p id="pontuacao">Pontuação: 0</p>
+
+    <!-- Canvas é a área de desenho do jogo -->
+    <canvas id="jogo" width="400" height="400"></canvas>
+
+    <p id="mensagem">Use as setas do teclado para jogar!</p>
+
+    <button id="reiniciar">Reiniciar jogo</button>
+
+
+    <script>
+
+        // ===================================
+        // 1. CAPTURAR OS ELEMENTOS DO HTML
+        // ===================================
+
+        const canvas = document.querySelector('#jogo');
+
+        // O contexto 2D permite desenhar no canvas
+        const ctx = canvas.getContext('2d');
+
+        const pontuacaoHTML = document.querySelector('#pontuacao');
+        const mensagem = document.querySelector('#mensagem');
+        const reiniciar = document.querySelector('#reiniciar');
+
+
+        // ===================================
+        // 2. CONFIGURAÇÕES DO JOGO
+        // ===================================
+
+        // Cada quadradinho terá 20 pixels
+        const tamanho = 20;
+
+        // O canvas tem 400 pixels.
+        // Portanto, temos 20 posições por linha e coluna.
+        const quantidade = canvas.width / tamanho;
+
+
+        // ===================================
+        // 3. VARIÁVEIS DO JOGO
+        // ===================================
+
+        // Cada parte da cobra é representada por x e y.
+        // A primeira posição é a cabeça.
+
+        let cobra = [
+            { x: 5, y: 5 },
+            { x: 4, y: 5 },
+            { x: 3, y: 5 }
+        ];
+
+        // Direção inicial da cobra
+        let direcao = 'ArrowRight';
+
+        // Próxima direção que será executada
+        let proximaDirecao = 'ArrowRight';
+
+        // Pontuação inicial
+        let pontos = 0;
+
+        // Guarda a posição da comida
+        let comida = {};
+
+        // Controla se o jogo terminou
+        let acabou = false;
+
+        // Guarda o intervalo do jogo
+        let intervalo;
+
+
+        // ===================================
+        // 4. GERAR A COMIDA
+        // ===================================
+
+        function gerarComida() {
+
+            // Sorteia uma posição dentro do tabuleiro
+            comida = {
+                x: Math.floor(Math.random() * quantidade),
+                y: Math.floor(Math.random() * quantidade)
+            };
+
+            // Verifica se a comida nasceu em cima da cobra
+            for (let parte of cobra) {
+
+                if (parte.x === comida.x && parte.y === comida.y) {
+
+                    // Se nasceu em cima da cobra,
+                    // sorteia outra posição
+                    gerarComida();
+                    return;
+                }
+            }
+        }
+
+
+        // ===================================
+        // 5. DESENHAR O JOGO
+        // ===================================
+
+        function desenhar() {
+
+            // Limpa o canvas antes de desenhar novamente
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenha a comida
+            ctx.fillStyle = 'red';
+
+            ctx.fillRect(
+                comida.x * tamanho,
+                comida.y * tamanho,
+                tamanho,
+                tamanho
+            );
+
+            // Percorre todas as partes da cobra
+            for (let i = 0; i < cobra.length; i++) {
+
+                // A cabeça terá uma cor diferente
+                if (i === 0) {
+                    ctx.fillStyle = '#a5ff70';
+                } else {
+                    ctx.fillStyle = '#45b84c';
+                }
+
+                // Desenha cada parte da cobra
+                ctx.fillRect(
+                    cobra[i].x * tamanho,
+                    cobra[i].y * tamanho,
+                    tamanho - 1,
+                    tamanho - 1
+                );
+            }
+        }
+
+
+        // ===================================
+        // 6. MOVIMENTAR A COBRA
+        // ===================================
+
+        function atualizar() {
+
+            // Se o jogo acabou, não faz mais nada
+            if (acabou) {
+                return;
+            }
+
+            // Atualiza a direção
+            direcao = proximaDirecao;
+
+            // Copia a posição atual da cabeça
+            let cabeca = {
+                x: cobra[0].x,
+                y: cobra[0].y
+            };
+
+            // Altera a posição conforme a direção
+            if (direcao === 'ArrowRight') {
+                cabeca.x++;
+            }
+
+            else if (direcao === 'ArrowLeft') {
+                cabeca.x--;
+            }
+
+            else if (direcao === 'ArrowUp') {
+                cabeca.y--;
+            }
+
+            else if (direcao === 'ArrowDown') {
+                cabeca.y++;
+            }
+
+
+            // Verifica se a cobra comeu a comida
+            const comeu =
+                cabeca.x === comida.x &&
+                cabeca.y === comida.y;
+
+
+            // ===================================
+            // 7. VERIFICAR COLISÕES
+            // ===================================
+
+            // Verifica se bateu nas paredes
+            if (
+                cabeca.x < 0 ||
+                cabeca.y < 0 ||
+                cabeca.x >= quantidade ||
+                cabeca.y >= quantidade
+            ) {
+                finalizarJogo();
+                return;
+            }
+
+            // Se não comeu, a cauda vai sair da posição atual.
+            // Por isso não precisamos considerar a última parte
+            // da cobra na verificação de colisão.
+            const corpoVerificado = comeu
+                ? cobra
+                : cobra.slice(0, -1);
+
+            // Verifica se bateu no próprio corpo
+            for (let parte of corpoVerificado) {
+
+                if (
+                    cabeca.x === parte.x &&
+                    cabeca.y === parte.y
+                ) {
+                    finalizarJogo();
+                    return;
+                }
+            }
+
+
+            // ===================================
+            // 8. ATUALIZAR A POSIÇÃO DA COBRA
+            // ===================================
+
+            // Coloca a nova cabeça no início do array
+            cobra.unshift(cabeca);
+
+            if (comeu) {
+
+                // Aumenta a pontuação
+                pontos++;
+
+                // Atualiza o texto na tela
+                pontuacaoHTML.textContent = 'Pontuação: ' + pontos;
+
+                // Gera outra comida
+                gerarComida();
+
+            } else {
+
+                // Remove a última parte da cobra.
+                // Isso faz parecer que ela se movimentou.
+                cobra.pop();
+            }
+
+            // Desenha tudo novamente
+            desenhar();
+        }
+
+
+        // ===================================
+        // 9. CAPTURAR AS TECLAS
+        // ===================================
+
+        document.addEventListener('keydown', function(event) {
+
+            // Impede que as setas rolem a página
+            if (event.key.startsWith('Arrow')) {
+                event.preventDefault();
+            }
+
+            // Não permite virar diretamente para o lado oposto
+            if (
+                event.key === 'ArrowRight' &&
+                direcao !== 'ArrowLeft' &&
+                proximaDirecao !== 'ArrowLeft'
+            ) {
+                proximaDirecao = 'ArrowRight';
+            }
+
+            else if (
+                event.key === 'ArrowLeft' &&
+                direcao !== 'ArrowRight' &&
+                proximaDirecao !== 'ArrowRight'
+            ) {
+                proximaDirecao = 'ArrowLeft';
+            }
+
+            else if (
+                event.key === 'ArrowUp' &&
+                direcao !== 'ArrowDown' &&
+                proximaDirecao !== 'ArrowDown'
+            ) {
+                proximaDirecao = 'ArrowUp';
+            }
+
+            else if (
+                event.key === 'ArrowDown' &&
+                direcao !== 'ArrowUp' &&
+                proximaDirecao !== 'ArrowUp'
+            ) {
+                proximaDirecao = 'ArrowDown';
+            }
+
+        });
+
+
+        // ===================================
+        // 10. FINALIZAR O JOGO
+        // ===================================
+
+        function finalizarJogo() {
+
+            acabou = true;
+
+            // Para o intervalo que movimenta a cobra
+            clearInterval(intervalo);
+
+            mensagem.textContent = 'GAME OVER! Sua pontuação: ' + pontos;
+        }
+
+
+        // ===================================
+        // 11. REINICIAR O JOGO
+        // ===================================
+
+        function iniciarJogo() {
+
+            // Para qualquer intervalo anterior
+            clearInterval(intervalo);
+
+            // Volta tudo ao estado inicial
+            cobra = [
+                { x: 5, y: 5 },
+                { x: 4, y: 5 },
+                { x: 3, y: 5 }
+            ];
+
+            direcao = 'ArrowRight';
+            proximaDirecao = 'ArrowRight';
+
+            pontos = 0;
+            acabou = false;
+
+            pontuacaoHTML.textContent = 'Pontuação: 0';
+            mensagem.textContent = 'Use as setas do teclado para jogar!';
+
+            // Cria a primeira comida
+            gerarComida();
+
+            // Desenha o estado inicial
+            desenhar();
+
+            // Executa atualizar() a cada 120 milissegundos
+            intervalo = setInterval(atualizar, 120);
+        }
+
+
+        // Quando clicar no botão, reinicia
+        reiniciar.addEventListener('click', iniciarJogo);
+
+
+        // ===================================
+        // 12. COMEÇAR O JOGO
+        // ===================================
+
+        iniciarJogo();
+
+    </script>
+
+</body>
+</html>

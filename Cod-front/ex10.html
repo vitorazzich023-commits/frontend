@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+
+        <input type="text" name="" id="primeiroemail">
+        <label for="primeiroemail">Digite o Email</label>
+        <input type="text" name="" id="segundoemail">
+        <label for="segundoemail">Confirme o Email</label>
+
+        <p id="erro"></p>
+        <input type="checkbox" name="" id="checkbox">
+
+        <button disabled>Confirmar</button>
+
+    </form>
+
+
+    <script>
+
+        const email1 = document.querySelector('#primeiroemail');
+        const email2 = document.querySelector('#segundoemail');
+        const check = document.querySelector('#checkbox');
+        const confirmar = document.querySelector('button')
+        const erro = document.querySelector('#erro');
+
+
+        check.addEventListener('change', function(){
+
+            if(check.checked){
+                confirmar.disabled = false
+            }else{
+                confirmar.disabled = true
+            }
+        })
+
+
+        email2.addEventListener('blur', function(){
+
+            if(email1.value !== email2.value){
+                erro.textContent = 'Os e-mails não são iguais!';
+            }
+
+        });
+
+        email2.addEventListener('focus', function(){
+
+            erro.textContent = '';
+
+        });
+
+
+        
+
+        confirmar.addEventListener('click', function(){
+
+            if(email1.value = email2.value){
+
+
+
+            }
+
+
+
+
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>

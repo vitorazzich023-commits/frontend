@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Este texto precisa sumir</h1>
+    <button>Sumir texto</button>
+</body>
+
+<script>
+    const texto = document.querySelector('h1');
+    const botao = document.querySelector('button');
+
+    botao.addEventListener('click', function(){
+        if(texto.style.display == 'none'){
+            texto.style.display = 'block';
+        }else{
+            texto.style.display = 'none';
+            botao.textContent = 'Aparecer texto'
+        }
+
+    })
+
+
+</script>
+</html>

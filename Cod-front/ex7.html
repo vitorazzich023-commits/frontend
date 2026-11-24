@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text">
+    <button>adicionar</button>
+    <ul>
+
+    </ul>
+    
+    
+    
+    <script>
+    const input = document.querySelector('input');
+    const adicionar = document.querySelector('button');
+    const lista = document.querySelector('ul');
+    
+    
+    
+    adicionar.addEventListener('click', function(){
+        const texto = input.value.trim();
+        if(texto===''){
+            return;
+        }
+
+
+        const item = document.createElement('li');
+        
+        item.textContent = texto
+        
+        lista.appendChild(item)
+        input.value = '';
+        input.focus();
+    })
+
+
+    </script>
+
+
+</body>
+
+    
+
+</html>

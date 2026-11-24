@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício 1</title>
+</head>
+<body>
+    <h1>0</h1>
+    <button id="mais">+</button>
+    <button id="menos">-</button>
+    <button id="zerar">Zerar</button>
+</body>
+
+<script>
+    let contador = 0;
+
+    const numero = document.querySelector('h1');
+    const mais = document.querySelector('#mais');
+    const menos = document.querySelector('#menos');
+    const zerar = document.querySelector("#zerar");
+
+    mais.addEventListener('click', function(){
+        contador++;
+        numero.textContent = contador;
+    })
+    menos.addEventListener('click', function(){
+        if(contador == 0){
+            contador = 0;
+            numero.textContent = contador;
+        }else{
+            contador--;
+            numero.textContent = contador;
+        }
+    })
+    zerar.addEventListener('click', function(){
+        contador = 0;
+        numero.textContent = contador;
+    })
+
+
+
+</script>
+
+
+</html>

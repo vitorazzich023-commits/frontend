@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <input type="text" name="" id="texto">
+
+    <input type="radio" name="tipo" id="h1" value="h1">
+    <label for="h1">H1</label>
+    <input type="radio" name="tipo" id="h2" value="h2">
+    <label for="h2">H2</label>
+    <input type="radio" name="tipo" id="h3" value="h3">
+    <label for="h3">H3</label>
+    <input type="radio" name="tipo" id="h4" value="h4">
+    <label for="h4">H4</label>
+    <input type="radio" name="tipo" id="h5" value="h5">
+    <label for="h5">H5</label>
+    <input type="radio" name="tipo" id="h6" value="h6">
+    <label for="h6">H6</label>
+    <input type="radio" name="tipo" id="p" value="p">
+    <label for="P">P</label>
+
+    <button id="criar">Criar elemento</button>
+
+
+    <div></div>
+
+
+
+
+
+
+
+
+
+    <script>
+        const textodigitado = document.querySelector('#texto')
+        const radiobuttons = document.querySelectorAll('input[name="tipo"]')
+        const criar = document.querySelector('button')
+        const textomostrar = document.querySelector('div')
+
+
+       
+
+        criar.addEventListener('click', function(){
+
+            let tagEscolhida = '';
+
+            radiobuttons.forEach(function(radio) {
+            
+            if(radio.checked){
+                tagEscolhida = radio.value;
+                const novoElemento = document.createElement(tagEscolhida)
+                novoElemento.textContent = textodigitado.value;
+                textomostrar.appendChild(novoElemento);
+                textodigitado.value = '';
+
+            }
+            });
+
+
+            
+            
+
+
+        })
+
+
+
+
+    </script>
+</body>
+</html>

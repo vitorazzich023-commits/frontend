@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Meu digitador</h1>
+
+    <script>
+
+        document.addEventListener('keydown', function(event){
+
+            if (event.key.length === 1 && event.key >= 'a' && event.key <= 'z') {
+                console.log('É uma letra!');
+
+                let letra = document.createElement('span')
+                letra.textContent = event.key.toUpperCase();
+                document.body.appendChild(letra)
+            }else if(event.key == ' '){
+                document.body.appendChild(document.createElement('br'));
+            }
+
+        })
+
+
+
+    </script>
+</body>
+</html>
